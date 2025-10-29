@@ -1,98 +1,206 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+env
+# Task API (NestJS + PostgreSQL)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A small REST API to manage tasks with a strict status flow: `pending → in_progress → done`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Each task has:
+- `id` (integer)
+- `title` (string)
+- `description` (string | optional)
+- `status` (enum: `pending` | `in_progress` | `done`)
+- `created_at` (timestamp)
+- `completed_at` (timestamp | null)
 
-## Description
+## Tech Stack
+- NestJS
+- TypeORM
+- PostgreSQL
+- class-validator (DTO validation)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Quick start
 
-## Project setup
+1) Install dependencies
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+2) Configuration
+
+Create a `.env` file in the project root with these variables (adjust as needed):
+
+```
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=postgres
+DB_NAME=taskdb
+```
+
+3) Database
+
+- Use the provided `schema.sql` to create the `task_status` enum and the `tasks` table. It also contains sample data.
+- Optionally run a local Postgres with `docker-compose.yml` and then load `schema.sql`.
+
+Start a local Postgres with Docker Compose (optional):
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up -d
 ```
 
-## Run tests
+Load the schema into the database (example):
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+psql "host=localhost port=5432 user=postgres dbname=taskdb" -f schema.sql
 ```
 
-## Deployment
+4) Run the app
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- Development (watch mode):
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Production build:
 
-## Resources
+```bash
+npm run build
+npm run start:prod
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+The app will run on `http://localhost:3000` by default (or the `PORT` you set).
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## API Endpoints
 
-## Support
+Base path: `api/v1/tasx`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+1) Create a Task
+- POST `api/v1/tasx`
+- Request body:
 
-## Stay in touch
+```json
+{
+  "title": "Write documentation",
+  "description": "Explain all API endpoints"
+}
+```
+- Response (201 Created):
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```json
+{
+  "id": 4,
+  "title": "Write documentation",
+  "description": "Explain all API endpoints",
+  "status": "pending",
+  "created_at": "2025-10-30T17:00:00.000Z",
+  "completed_at": null
+}
+```
 
-## License
+2) List all Tasks
+- GET `api/v1/tasx`
+- Response (200 OK): array of task objects
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```json
+[
+  {
+    "id": 1,
+    "title": "Read NestJS docs",
+    "description": "Skim controllers/providers",
+    "status": "pending",
+    "created_at": "2025-10-30T10:00:00.000Z",
+    "completed_at": null
+  }
+]
+```
+
+3) Update Task Status
+- PATCH `api/v1/tasx/update/:id`
+- Allowed transitions (enforced): `pending` → `in_progress` → `done`
+- Request body:
+
+```json
+{ "status": "in_progress" }
+```
+- Response (200 OK): updated task object. When status becomes `done`, `completed_at` is set.
+- Invalid transitions return `400 Bad Request` with a message like:
+
+```json
+{ "message": "Invalid status transition. Allowed order: pending -> in_progress -> done." }
+```
+
+1) Delete Task
+- DELETE `api/v1/tasx/delete/:id`
+- Response: `204 No Content`
+
+## Curl examples
+
+Create:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/tasx \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Write tests","description":"Unit tests for service"}'
+```
+
+List:
+
+```bash
+curl http://localhost:3000/api/v1/tasx
+```
+
+Update status (1 → in_progress):
+
+```bash
+curl -X PATCH http://localhost:3000/api/v1/tasx/update/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status":"in_progress"}'
+```
+
+Update status (1 → done):
+
+```bash
+curl -X PATCH http://localhost:3000/api/v1/tasx/update/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status":"done"}'
+```
+
+Delete:
+
+```bash
+curl -X DELETE http://localhost:3000/api/v1/tasx/delete/1
+```
+
+## Files of interest
+
+- `schema.sql` — SQL to create the `task_status` enum and `tasks` table; includes sample rows.
+- `docker-compose.yaml` — optional Postgres service for local development.
+- `src/` — NestJS source code (controllers, services, entities, DTOs).
+- `test/` — e2e tests (Jest) if you'd like to run integration tests.
+
+## Notes & behavior
+
+- DTO validation is enforced; invalid payloads return `400` responses.
+- `completed_at` is automatically set when a task becomes `done`.
+- The status flow is strict and cannot be skipped.
+
+## Try it (copyable commands)
+
+### 1. install dependencies
+```bash
+npm install
+```
+### 2. (optional) start a local postgres via docker-compose
+```bash
+docker compose up -d
+```
+### 3. load DB schema (adjust connection info if needed)
+```bash
+psql "host=localhost port=5432 user=postgres dbname=taskdb" -f schema.sql
+```
+### 4. run in dev
+```bash
+npm run start:dev
+```
