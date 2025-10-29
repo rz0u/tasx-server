@@ -188,19 +188,19 @@ curl -X DELETE http://localhost:3000/api/v1/tasx/delete/1
 
 ## Try it (copyable commands)
 
-### 1. install dependencies
+#### 1. install dependencies
 ```bash
 npm install
 ```
-### 2. (optional) start a local postgres via docker-compose
+#### 2. (optional) start a local postgres via docker-compose
 ```bash
 docker compose up -d
 ```
-### 3. load DB schema (adjust connection info if needed)
+#### 3. load DB schema (adjust connection info if needed)
 ```bash
 psql "host=localhost port=5432 user=postgres dbname=taskdb" -f schema.sql
 ```
-### 4. run in dev
+#### 4. run in dev
 ```bash
 npm run start:dev
 ```
