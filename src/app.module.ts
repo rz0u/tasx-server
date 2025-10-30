@@ -8,16 +8,33 @@ import { Task } from './task/task.entity';
   imports: [
     ConfigModule.forRoot({isGlobal:true}),
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        type: 'postgres',
-        host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT || 5432),
-        username: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-        entities:[Task],
-        synchronize: false
-      })
+      useFactory: () => {
+        const dbUrl = process.env.POSTGRES_URL
+
+        // if running in Vercel (Neon)
+        if (dbUrl) {
+          return {
+            type: 'postgres',
+            url: dbUrl,
+            entities: [Task],
+            synchronize: false,
+            ssl: {rejectUnauthorized: false},
+            extra: {sslmode: 'require'}
+          }
+        }
+
+        // local fallback (Docker Postgres)
+        return {
+          type: 'postgres',
+          host: process.env.DB_HOST,
+          port: Number(process.env.DB_PORT || 5432),
+          username: process.env.DB_USER,
+          password: process.env.DB_PASS,
+          database: process.env.DB_NAME,
+          entities:[Task],
+          synchronize: false
+        }
+      }
     }),
     TaskModule
   ],
