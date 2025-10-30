@@ -8,7 +8,11 @@ export default async function handler(req: any, res: any) {
   if (!server) {
     const app = await NestFactory.create(AppModule, {
       cors: {
-        origin: [process.env.CLIENT_URL, 'http://localhost:5173'].filter(Boolean) as string[],
+        origin: ['http://localhost:5173', process.env.CLIENT_URL].filter(Boolean) as string[],
+        methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+        credentials: false,
+        optionsSuccessStatus: 204,
       },
       logger: ['error', 'warn'],
     });
@@ -24,11 +28,6 @@ export default async function handler(req: any, res: any) {
     
     await app.init();
     server = app.getHttpAdapter().getInstance();
-  }
-
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
   }
   
   return server(req, res);

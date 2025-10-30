@@ -12,24 +12,12 @@ async function bootstrap() {
   ].filter(Boolean) as string[];
 
   app.enableCors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowlist.includes(origin)) return callback(null, true);
-      return callback(new Error('Not allowed by CORS'), false);
-    },
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-      'Origin'
-    ],
-    exposedHeaders: ['Content-Length'],
-    credentials: false,
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
+  origin: ['http://localhost:5173', process.env.CLIENT_URL].filter(Boolean) as string[],
+  methods: ['GET','POST','PATCH','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With','Accept','Origin'],
+  credentials: false,
+  optionsSuccessStatus: 204,
+});
 
   // Global prefix
   app.setGlobalPrefix('api');
