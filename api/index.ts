@@ -6,13 +6,11 @@ let server: any;
 
 export default async function handler(req: any, res: any) {
   if (!server) {
-    const app = await NestFactory.create(AppModule, { cors: false });
-
-    // CORS
-    app.enableCors({
-      origin: [process.env.CLIENT_URL, 'http://localhost:5173'], 
-      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+    const app = await NestFactory.create(AppModule, {
+      cors: {
+        origin: [process.env.CLIENT_URL, 'http://localhost:5173'].filter(Boolean) as string[],
+      },
+      logger: ['error', 'warn'],
     });
     
     // Add global prefix
@@ -27,5 +25,11 @@ export default async function handler(req: any, res: any) {
     await app.init();
     server = app.getHttpAdapter().getInstance();
   }
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
+  
   return server(req, res);
 }
