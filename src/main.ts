@@ -6,10 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
-  app.enableCors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173', // Vite default port
-    credentials: true,
-  });
+  app.enableCors({ origin: '*' }); 
 
   // Global prefix
   app.setGlobalPrefix('api');
