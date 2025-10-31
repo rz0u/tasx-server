@@ -29,7 +29,7 @@ export class TaskService {
         if (current === next) {
             throw new BadRequestException('No changes to status')
         }
-        const order: TaskStatus[] = ['pending', 'in_progress', 'done']
+        const order: TaskStatus[] = ['pending', 'done']
         const fromIdx = order.indexOf(current)
         const toIdx = order.indexOf(next)
         if (fromIdx === -1 || toIdx === -1 || toIdx - fromIdx !== 1) {
